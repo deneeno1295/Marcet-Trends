@@ -1,0 +1,177 @@
+{
+  "customObjects": [
+    {
+      "fullName": "Insight__c",
+      "label": "Insight",
+      "pluralLabel": "Insights",
+      "nameField": {
+        "label": "Insight Name",
+        "type": "Text"
+      },
+      "deploymentStatus": "Deployed",
+      "sharingModel": "ReadWrite",
+      "fields": [
+        {
+          "fullName": "ExternalId__c",
+          "label": "External ID",
+          "type": "Text",
+          "length": 255,
+          "required": true,
+          "externalId": true,
+          "unique": true
+        },
+        {
+          "fullName": "Title__c",
+          "label": "Title",
+          "type": "Text",
+          "length": 255,
+          "required": true
+        },
+        {
+          "fullName": "Summary__c",
+          "label": "Summary",
+          "type": "LongTextArea",
+          "length": 32768
+        },
+        {
+          "fullName": "URL__c",
+          "label": "URL",
+          "type": "Url"
+        },
+        {
+          "fullName": "Score__c",
+          "label": "Score",
+          "type": "Number",
+          "precision": 10,
+          "scale": 2
+        },
+        {
+          "fullName": "OccurredAt__c",
+          "label": "Occurred At",
+          "type": "DateTime"
+        },
+        {
+          "fullName": "Tags__c",
+          "label": "Tags",
+          "type": "Text",
+          "length": 255,
+          "description": "Semicolon-separated list of tags"
+        },
+        {
+          "fullName": "TrendNames__c",
+          "label": "Trend Names",
+          "type": "Text",
+          "length": 255,
+          "description": "Semicolon-separated list of trends"
+        },
+        {
+          "fullName": "PersonNames__c",
+          "label": "Person Names",
+          "type": "Text",
+          "length": 255,
+          "description": "Semicolon-separated list of people"
+        }
+      ]
+    },
+    {
+      "fullName": "Waypoint__c",
+      "label": "Waypoint",
+      "pluralLabel": "Waypoints",
+      "nameField": {
+        "label": "Waypoint Name",
+        "type": "Text"
+      },
+      "deploymentStatus": "Deployed",
+      "sharingModel": "ReadWrite",
+      "fields": [
+        {
+          "fullName": "ExternalId__c",
+          "label": "External ID",
+          "type": "Text",
+          "length": 255,
+          "required": true,
+          "externalId": true,
+          "unique": true
+        },
+        {
+          "fullName": "FromInsight__c",
+          "label": "From Insight",
+          "type": "Text",
+          "length": 255,
+          "description": "External ID of source insight"
+        },
+        {
+          "fullName": "ToInsight__c",
+          "label": "To Insight",
+          "type": "Text",
+          "length": 255,
+          "description": "External ID of target insight"
+        },
+        {
+          "fullName": "Relation__c",
+          "label": "Relation Type",
+          "type": "Picklist",
+          "valueSet": {
+            "restricted": true,
+            "valueSetDefinition": {
+              "value": [
+                { "fullName": "supports", "label": "Supports", "default": false },
+                { "fullName": "contradicts", "label": "Contradicts", "default": false },
+                { "fullName": "relates_to", "label": "Relates To", "default": true },
+                { "fullName": "evolves_from", "label": "Evolves From", "default": false }
+              ]
+            }
+          }
+        },
+        {
+          "fullName": "Weight__c",
+          "label": "Weight",
+          "type": "Number",
+          "precision": 5,
+          "scale": 2,
+          "defaultValue": 1.0
+        }
+      ]
+    }
+  ],
+  "platformEvents": [
+    {
+      "fullName": "Insight_Digest__e",
+      "label": "Insight Digest",
+      "pluralLabel": "Insight Digests",
+      "deploymentStatus": "Deployed",
+      "fields": [
+        {
+          "fullName": "Title__c",
+          "label": "Title",
+          "type": "Text",
+          "length": 255,
+          "required": true
+        },
+        {
+          "fullName": "Audience__c",
+          "label": "Audience",
+          "type": "Text",
+          "length": 100
+        },
+        {
+          "fullName": "PeriodStart__c",
+          "label": "Period Start",
+          "type": "DateTime"
+        },
+        {
+          "fullName": "PeriodEnd__c",
+          "label": "Period End",
+          "type": "DateTime"
+        },
+        {
+          "fullName": "HtmlBody__c",
+          "label": "HTML Body",
+          "type": "LongTextArea",
+          "length": 131072
+        }
+      ]
+    }
+  ]
+}
+

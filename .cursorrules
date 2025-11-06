@@ -1,0 +1,53 @@
+# Cursor Rules for Insight Graph Project
+
+## Code Style
+- Use TypeScript for all files
+- Use functional components with hooks in React
+- Use Tailwind CSS for styling
+- Follow Next.js 14 App Router conventions
+- Use server components by default, mark client components explicitly with 'use client'
+
+## Database
+- All database queries should use Prisma
+- Always set RLS context before queries: `await setRLSContext(userId)`
+- Use workspace filtering in all queries
+- Optimize with proper indexes
+
+## API Routes
+- Always validate with Zod
+- Return proper HTTP status codes
+- Include error handling with Sentry
+- Apply rate limiting where appropriate
+- Use RLS for data access control
+
+## Components
+- Keep components small and focused
+- Extract reusable UI to components/ui
+- Use shadcn/ui components as base
+- Optimize for performance (React.memo, useMemo where needed)
+
+## Performance
+- Lazy load heavy components
+- Batch LLM calls when possible
+- Use React Query for data fetching
+- Optimize graph rendering for large datasets
+
+## Security
+- Never expose secrets in client code
+- Validate all user inputs
+- Use RLS policies for multi-tenancy
+- Rate limit API endpoints
+- Encrypt sensitive data
+
+## Testing
+- Write unit tests for business logic
+- Write E2E tests for critical flows
+- Mock external services in tests
+- Test error paths
+
+## Git
+- Write clear commit messages
+- Keep commits atomic
+- Use feature branches
+- Run tests before pushing
+

@@ -1,0 +1,233 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  extensions = [vector]
+}
+
+model User {
+  id          String        @id @default(cuid())
+  email       String        @unique
+  name        String?
+  imageUrl    String?
+  memberships Membership[]
+  accounts    OAuthAccount[]
+  createdAt   DateTime      @default(now())
+}
+
+model Workspace {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  memberships Membership[]
+  sources     Source[]
+  items       Item[]
+  links       Link[]
+  themes      Theme[]
+  people      Person[]
+  trends      Trend[]
+  newsletters Newsletter[]
+  settings    Json?
+  createdAt   DateTime      @default(now())
+}
+
+model Membership {
+  id          String    @id @default(cuid())
+  role        Role
+  userId      String
+  workspaceId String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  
+  @@unique([userId, workspaceId])
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+model OAuthAccount {
+  id           String   @id @default(cuid())
+  userId       String
+  provider     String
+  accessToken  String   @db.Text
+  refreshToken String?  @db.Text
+  instanceUrl  String?
+  orgId        String?
+  expiresAt    DateTime?
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  
+  @@unique([userId, provider])
+}
+
+model Source {
+  id          String    @id @default(cuid())
+  workspaceId String
+  type        String    // "rss", "salesforce", "manual", "api"
+  name        String
+  url         String?
+  config      Json?
+  enabled     Boolean   @default(true)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  items       Item[]
+  createdAt   DateTime  @default(now())
+}
+
+model Item {
+  id           String       @id @default(cuid())
+  workspaceId  String
+  title        String
+  rawUrl       String?
+  sourceId     String?
+  contentMd    String       @db.Text
+  summary      String?      @db.Text
+  embedding    Unsupported("vector(1536)")?
+  score        Float        @default(0)
+  occurredAt   DateTime     @default(now())
+  createdById  String?
+  meta         Json?
+  people       ItemPerson[]
+  trends       ItemTrend[]
+  tags         ItemTag[]
+  workspace    Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  source       Source?      @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  linksFrom    Link[]       @relation("FromItem")
+  linksTo      Link[]       @relation("ToItem")
+  createdAt    DateTime     @default(now())
+  
+  @@index([workspaceId, occurredAt])
+  @@index([workspaceId, score])
+}
+
+model Link {
+  id           String    @id @default(cuid())
+  workspaceId  String
+  fromItemId   String
+  toItemId     String
+  relation     String    // "supports", "contradicts", "relates_to", "evolves_from"
+  weight       Float     @default(1)
+  createdAt    DateTime  @default(now())
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  from         Item      @relation("FromItem", fields: [fromItemId], references: [id], onDelete: Cascade)
+  to           Item      @relation("ToItem", fields: [toItemId], references: [id], onDelete: Cascade)
+  
+  @@unique([fromItemId, toItemId, relation])
+  @@index([workspaceId])
+}
+
+model Tag {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  items     ItemTag[]
+  themes    ThemeTag[]
+  createdAt DateTime    @default(now())
+}
+
+model ItemTag {
+  itemId  String
+  tagId   String
+  item    Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@id([itemId, tagId])
+}
+
+model Theme {
+  id          String      @id @default(cuid())
+  workspaceId String
+  name        String
+  description String?     @db.Text
+  color       String?
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  tags        ThemeTag[]
+  createdAt   DateTime    @default(now())
+}
+
+model ThemeTag {
+  themeId String
+  tagId   String
+  theme   Theme  @relation(fields: [themeId], references: [id], onDelete: Cascade)
+  tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@id([themeId, tagId])
+}
+
+model Person {
+  id          String       @id @default(cuid())
+  workspaceId String
+  name        String
+  role        String?
+  org         String?
+  avatarUrl   String?
+  bio         String?      @db.Text
+  signals     Json?        // e.g., { twitter: "@handle", linkedin: "url", rss: "feed" }
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  items       ItemPerson[]
+  createdAt   DateTime     @default(now())
+  
+  @@index([workspaceId])
+}
+
+model ItemPerson {
+  itemId    String
+  personId  String
+  item      Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  person    Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  relevance Float  @default(1)
+  
+  @@id([itemId, personId])
+}
+
+model Trend {
+  id          String      @id @default(cuid())
+  workspaceId String
+  name        String
+  description String?     @db.Text
+  color       String?
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  items       ItemTrend[]
+  createdAt   DateTime    @default(now())
+  
+  @@index([workspaceId])
+}
+
+model ItemTrend {
+  itemId    String
+  trendId   String
+  item      Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  trend     Trend  @relation(fields: [trendId], references: [id], onDelete: Cascade)
+  momentum  Float  @default(0)
+  
+  @@id([itemId, trendId])
+}
+
+model Newsletter {
+  id          String    @id @default(cuid())
+  workspaceId String
+  title       String
+  cadence     String    // "daily", "weekly", "adhoc"
+  audience    String    // "Leadership", "Product", "OCEO"
+  periodStart DateTime
+  periodEnd   DateTime
+  html        String    @db.Text
+  meta        Json?
+  createdById String?
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  
+  @@index([workspaceId, createdAt])
+}
+

@@ -62,3 +62,4 @@ echo "2. Sign up/login with Clerk"
 echo "3. Follow the testing guide in TESTING.md"
 echo ""
 
+

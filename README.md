@@ -447,3 +447,4 @@ For issues, questions, or contributions, please open an issue on GitHub.
 
 Built with ❤️ using Next.js, Supabase, OpenAI, and modern web technologies.
 
+

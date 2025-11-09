@@ -298,3 +298,4 @@ CREATE POLICY "Admins and above can delete newsletters" ON "Newsletter"
     get_user_role("workspaceId", current_setting('app.current_user_id', true)::TEXT) IN ('OWNER', 'ADMIN')
   );
 
+

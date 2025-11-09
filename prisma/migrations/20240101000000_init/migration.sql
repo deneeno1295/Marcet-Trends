@@ -299,3 +299,4 @@ ALTER TABLE "ItemTrend" ADD CONSTRAINT "ItemTrend_trendId_fkey" FOREIGN KEY ("tr
 -- AddForeignKey
 ALTER TABLE "Newsletter" ADD CONSTRAINT "Newsletter_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
+

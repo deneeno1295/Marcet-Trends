@@ -66,3 +66,4 @@ echo "3. Configure page layouts if needed"
 # Cleanup
 rm -rf "$TEMP_DIR"
 
+

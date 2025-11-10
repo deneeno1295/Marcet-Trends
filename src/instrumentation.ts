@@ -2,11 +2,11 @@
 // This file is automatically loaded by Next.js when instrumentation is enabled
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
-    await import('./lib/sentry.server');
+    await import('../sentry.server.config');
   }
 
   if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('./lib/sentry.edge');
+    await import('../sentry.edge.config');
   }
 }
 

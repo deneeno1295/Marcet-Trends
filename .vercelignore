@@ -1,0 +1,17 @@
+# Vercel ignore file
+node_modules
+.git
+.env*
+!.env.example
+*.log
+.DS_Store
+coverage
+.vscode
+.idea
+*.md
+!README.md
+scripts
+salesforce
+playwright.config.ts
+vitest.config.ts
+
